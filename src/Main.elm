@@ -5,8 +5,8 @@ import Browser.Navigation as Nav
 import Css exposing (..)
 import Url
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (placeholder, value, css, href, src)
-import Html.Styled.Events exposing (onClick, onInput, onSubmit)
+import Html.Styled.Attributes exposing (placeholder, value, css, href)
+import Html.Styled.Events exposing (..)
 import Html.Styled.Attributes exposing (autofocus)
 
 type alias Flags = ()
