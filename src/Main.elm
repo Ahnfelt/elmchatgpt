@@ -75,10 +75,10 @@ subscriptions model =
 view : Model -> Browser.Document Msg
 view model =
     { title = "Application Title"
-    , body =
-        [ toUnstyled <| div []
+    , body = List.map toUnstyled
+        [ div []
             [ text "Chat" ]
-        , toUnstyled <| form [onSubmit Submitted] 
+        , form [onSubmit Submitted] 
             [ input 
                 [ placeholder "Just ask"
                 , autofocus True
