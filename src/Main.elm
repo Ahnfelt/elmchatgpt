@@ -2,12 +2,12 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (..)
+import Css exposing (..)
 import Url
-import Html.Attributes exposing (placeholder)
-import Html.Attributes exposing (value)
-import Html.Events exposing (onInput)
-import Html.Events exposing (onSubmit)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (placeholder, value, css, href, src)
+import Html.Styled.Events exposing (onClick, onInput, onSubmit)
+import Html.Styled.Attributes exposing (autofocus)
 
 type alias Flags = ()
 
@@ -37,9 +37,7 @@ init flags url key =
 
 
 type Msg
-    = Msg1
-    | Msg2
-    | MessageChanged String
+    = MessageChanged String
     | Submitted
     | UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
@@ -48,12 +46,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Msg1 ->
-            ( model, Cmd.none )
-
-        Msg2 ->
-            ( model, Cmd.none )
-
+    
         MessageChanged message ->
             ( { model | message = message }, Cmd.none )
 
@@ -83,13 +76,17 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Application Title"
     , body =
-        [ div []
+        [ toUnstyled <| div []
             [ text "Chat" ]
-        , form [onSubmit Submitted] 
+        , toUnstyled <| form [onSubmit Submitted] 
             [ input 
                 [ placeholder "Just ask"
+                , autofocus True
                 , value model.message
                 , onInput MessageChanged
+                , css 
+                    [ color (rgb 255 0 0)
+                    ]
                 ]
                 []
             ]
