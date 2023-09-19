@@ -82,9 +82,9 @@ view model =
             [ input 
                 [ placeholder "Just ask"
                 , autofocus True
+                , messageInputCss
                 , value model.message
                 , onInput MessageChanged
-                , messageInputCss
                 ]
                 []
             ]
