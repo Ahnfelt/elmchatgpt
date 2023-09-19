@@ -74,7 +74,7 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Application Title"
+    { title = "Elm ChatGPT client"
     , body = List.map toUnstyled
         [ div []
             [ text "Chat" ]
