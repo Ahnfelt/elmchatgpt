@@ -84,11 +84,15 @@ view model =
                 , autofocus True
                 , value model.message
                 , onInput MessageChanged
-                , css 
-                    [ color (rgb 255 0 0)
-                    ]
+                , messageInputCss
                 ]
                 []
             ]
         ]
     }
+
+messageInputCss : Attribute msg
+messageInputCss = css 
+    [ color (rgb 255 0 0)
+    , fontWeight bold
+    ]
