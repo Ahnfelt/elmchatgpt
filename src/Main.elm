@@ -10,6 +10,8 @@ import Html.Styled.Attributes exposing (autofocus)
 import Styles
 import Json.Decode as Json exposing (Decoder)
 import Html.Styled.Attributes exposing (style)
+import Html.Styled.Attributes exposing (type_)
+import Html.Styled.Attributes exposing (disabled)
 
 type alias Flags = ()
 
@@ -109,6 +111,13 @@ renderMessageForm model = form
         , preventDefaultOn "keydown" decodeKeyPress
         ]
         []
+    , button
+        [ type_ "submit"
+        , Styles.messageButtonCss
+        , disabled (String.trim model.message == "")
+        ]
+        [ Styles.sendSvg
+        ]
     ]
 
 decodeKeyPress : Decoder (Msg, Bool)
