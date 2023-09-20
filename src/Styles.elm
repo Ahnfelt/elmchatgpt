@@ -6,6 +6,8 @@ import Html.Styled.Attributes exposing (css)
 import Css.Transitions exposing (transition)
 import Css.Transitions exposing (Transition)
 import Html.Styled.Attributes exposing (placeholder)
+import Svg
+import Svg.Attributes
 
 mainCss : Attribute msg
 mainCss = css
@@ -74,3 +76,16 @@ assistantMessageContainerCss = css
     ]
 
 
+-- https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Asend%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4024
+sendSvg : String -> Svg.Svg msg
+sendSvg color = Svg.svg
+    [ Svg.Attributes.height "16"
+    , Svg.Attributes.width "16"
+    , Svg.Attributes.viewBox "0 -960 960 960"
+    ]
+    [ Svg.path
+        [ Svg.Attributes.d "M120-160v-240l320-80-320-80v-240l760 320-760 320Z"
+        , Svg.Attributes.fill color
+        ]
+        []
+    ]
