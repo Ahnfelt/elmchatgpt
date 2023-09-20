@@ -8,6 +8,7 @@ import Html.Styled.Attributes exposing (placeholder, value, href)
 import Html.Styled.Events exposing (..)
 import Html.Styled.Attributes exposing (autofocus)
 import Styles
+import Json.Decode as Json exposing (Decoder)
 
 type alias Flags = ()
 
@@ -42,7 +43,7 @@ init flags url key =
 
 type Msg
     = MessageChanged String
-    | Submitted
+    | Submitted Bool
     | UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
 
@@ -53,8 +54,11 @@ update msg model =
     
         MessageChanged message ->
             ( { model | message = message }, Cmd.none )
+            
+        Submitted False ->
+            ( model, Cmd.none )
 
-        Submitted ->
+        Submitted True ->
             ( { model 
                 | message = ""
                 , chat = ChatEntry model.message Nothing :: model.chat
@@ -83,21 +87,37 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Elm ChatGPT client"
     , body = List.map toUnstyled
-        [ div [] 
-            [ text "Chat" ]
-        , div [] (List.reverse model.chat |> List.map renderChatEntry)
-        , form [onSubmit Submitted] 
-            [ input 
-                [ placeholder "Just ask"
-                , autofocus True
-                , Styles.messageInputCss
-                , value model.message
-                , onInput MessageChanged
+        [ main_ [ Styles.mainCss ] 
+            [ div [] 
+                [ text "Chat" ]
+            , div [] (List.reverse model.chat |> List.map renderChatEntry)
+            , form [ Styles.messageFormCss, onSubmit (Submitted True) ] 
+                [ textarea 
+                    [ placeholder "Just ask"
+                    , autofocus True
+                    , Styles.messageInputCss
+                    , value model.message
+                    , onInput MessageChanged
+                    , preventDefaultOn "keydown" decodeKeyPress
+                    ]
+                    []
                 ]
-                []
             ]
         ]
     }
+
+decodeKeyPress : Decoder (Msg, Bool)
+decodeKeyPress =
+    Json.field "keyCode" Json.int |> Json.andThen (\keyCode ->
+        Json.field "altKey" Json.bool |> Json.andThen (\altKey ->
+            Json.field "ctrlKey" Json.bool |> Json.andThen (\ctrlKey ->
+                Json.field "shiftKey" Json.bool |> Json.andThen (\shiftKey ->
+                    let submit = keyCode == 13 && not ctrlKey && not altKey && not shiftKey
+                    in Json.succeed (Submitted submit, submit)
+                )
+            )
+        )
+    )
 
 renderChatEntry : ChatEntry -> Html Msg
 renderChatEntry entry = 
