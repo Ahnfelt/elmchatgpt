@@ -108,7 +108,7 @@ renderMessageForm model = form
         , Styles.messageInputCss
         , value model.message
         , onInput MessageChanged
-        , preventDefaultOn "keydown" decodeKeyPress
+        , preventDefaultOn "keydown" (decodeKeyPress model.message)
         ]
         []
     , button
@@ -120,14 +120,15 @@ renderMessageForm model = form
         ]
     ]
 
-decodeKeyPress : Decoder (Msg, Bool)
-decodeKeyPress =
+decodeKeyPress : String -> Decoder (Msg, Bool)
+decodeKeyPress message =
     Json.field "keyCode" Json.int |> Json.andThen (\keyCode ->
         Json.field "altKey" Json.bool |> Json.andThen (\altKey ->
             Json.field "ctrlKey" Json.bool |> Json.andThen (\ctrlKey ->
                 Json.field "shiftKey" Json.bool |> Json.andThen (\shiftKey ->
-                    let submit = keyCode == 13 && not ctrlKey && not altKey && not shiftKey
-                    in Json.succeed (Submitted submit, submit)
+                    let plainReturn = keyCode == 13 && not ctrlKey && not altKey && not shiftKey
+                        submit = plainReturn && String.trim message /= ""
+                    in Json.succeed (Submitted submit, plainReturn)
                 )
             )
         )
