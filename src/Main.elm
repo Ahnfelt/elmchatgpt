@@ -2,12 +2,12 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Css exposing (..)
 import Url
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (placeholder, value, css, href)
+import Html.Styled.Attributes exposing (placeholder, value, href)
 import Html.Styled.Events exposing (..)
 import Html.Styled.Attributes exposing (autofocus)
+import Styles
 
 type alias Flags = ()
 
@@ -90,7 +90,7 @@ view model =
             [ input 
                 [ placeholder "Just ask"
                 , autofocus True
-                , messageInputCss
+                , Styles.messageInputCss
                 , value model.message
                 , onInput MessageChanged
                 ]
@@ -105,12 +105,6 @@ renderChatEntry entry =
             Nothing -> [ text "Assistant is typing..." ]
             Just answer -> [ text ("Assistant: " ++ answer) ]
     in div [] 
-        [ div [] [text entry.question]
+        [ div [] [ text ("User: " ++ entry.question) ]
         , div [] answerHtml
-    ]
-
-messageInputCss : Attribute msg
-messageInputCss = css 
-    [ color (rgb 255 0 0)
-    , fontWeight bold
-    ]
+        ]
