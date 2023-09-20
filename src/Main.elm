@@ -93,7 +93,7 @@ view model =
             , div [] (List.reverse model.chat |> List.map renderChatEntry)
             , form [ Styles.messageFormCss, onSubmit (Submitted True) ] 
                 [ textarea 
-                    [ placeholder "Just ask"
+                    [ placeholder "Send a message"
                     , autofocus True
                     , Styles.messageInputCss
                     , value model.message

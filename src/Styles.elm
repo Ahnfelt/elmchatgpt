@@ -30,8 +30,24 @@ messageFormCss = css
 
 messageInputCss : Attribute msg
 messageInputCss = css 
-    [ color (rgb 255 0 0)
-    , fontWeight bold
+    [ fontSize (px 16)
+    , fontFamilies [ "sans-serif" ]
+    , backgroundColor (hex "#40414f")
+    , color (hex "#f0f0f0")
+    , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.2)
+    , property "appearance" "none"
+    , property "border" "none"
+    , boxSizing borderBox
+    , padding (px 17)
+    , height (px 54)
+    , borderRadius (px 12)
+    , width (calc (pct 100) minus (px 80))
+    , maxWidth (px 750)
+    , resize none
+    , focus
+        [ outline none
+        , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.3)
+        ]
     ]
 
 userMessageContainerCss : Attribute msg
