@@ -85,7 +85,7 @@ view model =
     , body = List.map toUnstyled
         [ div [] 
             [ text "Chat" ]
-        , div [] (List.map renderChatEntry model.chat)
+        , div [] (List.reverse model.chat |> List.map renderChatEntry)
         , form [onSubmit Submitted] 
             [ input 
                 [ placeholder "Just ask"
