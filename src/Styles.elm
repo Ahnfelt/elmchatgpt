@@ -5,6 +5,7 @@ import Css exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Css.Transitions exposing (transition)
 import Css.Transitions exposing (Transition)
+import Html.Styled.Attributes exposing (placeholder)
 
 mainCss : Attribute msg
 mainCss = css
@@ -36,7 +37,7 @@ messageInputCss = css
     , fontFamilies [ "sans-serif" ]
     , backgroundColor (hex "#40414f")
     , color (hex "#f0f0f0")
-    , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.2)
+    , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.15)
     , property "appearance" "none"
     , property "border" "none"
     , boxSizing borderBox
@@ -47,9 +48,13 @@ messageInputCss = css
     , width (calc (pct 100) minus (px 80))
     , maxWidth (px 750)
     , resize none
+    , Css.pseudoElement "placeholder" 
+        [ color (hex "#8e8ea0")
+        , opacity (num 1.0)
+        ]
     , focus
         [ outline none
-        , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.3)
+        , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.25)
         ]
     ]
 
