@@ -63,18 +63,37 @@ messageInputCss = css
 userMessageContainerCss : Attribute msg
 userMessageContainerCss = css
     [ displayFlex
+    , justifyContent center
     , paddingTop (px 50)
     , paddingBottom (px 50)
+    , fontSize (px 16)
+    , fontFamilies [ "sans-serif" ]
+    , color (rgb 209 213 219)
     ]
 
 assistantMessageContainerCss : Attribute msg
 assistantMessageContainerCss = css
     [ backgroundColor (hex "#444654")
     , displayFlex
+    , justifyContent center
     , paddingTop (px 50)
     , paddingBottom (px 50)
+    , fontSize (px 16)
+    , fontFamilies [ "sans-serif" ]
+    , color (rgb 209 213 219)
     ]
 
+userMessageCss : Attribute msg
+userMessageCss = css
+    [ width (calc (pct 100) minus (px 80))
+    , maxWidth (px 750)
+    ]
+
+assistantMessageCss : Attribute msg
+assistantMessageCss = css
+    [ width (calc (pct 100) minus (px 80))
+    , maxWidth (px 750)
+    ]
 
 -- https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Asend%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4024
 sendSvg : String -> Svg.Svg msg

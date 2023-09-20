@@ -89,25 +89,27 @@ view model =
     { title = "Elm ChatGPT client"
     , body = List.map toUnstyled
         [ main_ [ Styles.mainCss ] 
-            [ div [] 
-                [ text "Chat" ]
-            , div [] (List.reverse model.chat |> List.map renderChatEntry)
-            , form [ Styles.messageFormCss, onSubmit (Submitted True) ] 
-                [ textarea 
-                    [ autofocus True
-                    , if String.contains "\n" model.message 
-                        then style "height" "150px" 
-                        else placeholder "Send a message"
-                    , Styles.messageInputCss
-                    , value model.message
-                    , onInput MessageChanged
-                    , preventDefaultOn "keydown" decodeKeyPress
-                    ]
-                    []
-                ]
+            [ div [] (List.reverse model.chat |> List.map renderChatEntry)
+            , renderMessageForm model
             ]
         ]
     }
+
+renderMessageForm : Model -> Html Msg
+renderMessageForm model = form
+    [ Styles.messageFormCss, onSubmit (Submitted True) ] 
+    [ textarea 
+        [ autofocus True
+        , if String.contains "\n" model.message 
+            then style "height" "150px" 
+            else placeholder "Send a message"
+        , Styles.messageInputCss
+        , value model.message
+        , onInput MessageChanged
+        , preventDefaultOn "keydown" decodeKeyPress
+        ]
+        []
+    ]
 
 decodeKeyPress : Decoder (Msg, Bool)
 decodeKeyPress =
@@ -125,9 +127,13 @@ decodeKeyPress =
 renderChatEntry : ChatEntry -> Html Msg
 renderChatEntry entry = 
     let answerHtml = case entry.answer of
-            Nothing -> [ text "Assistant is typing..." ]
-            Just answer -> [ text ("Assistant: " ++ answer) ]
+            Nothing -> text "Assistant is typing..."
+            Just answer -> text ("Assistant: " ++ answer)
     in div [] 
-        [ div [] [ text ("User: " ++ entry.question) ]
-        , div [] answerHtml
+        [ div [ Styles.userMessageContainerCss ] 
+            [ div [ Styles.userMessageCss ] [ text ("User: " ++ entry.question) ]
+            ]
+        , div [ Styles.assistantMessageContainerCss ] 
+            [ div [ Styles.assistantMessageCss ] [ answerHtml ]
+            ]
         ]
