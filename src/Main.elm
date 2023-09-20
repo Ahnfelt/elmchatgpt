@@ -22,18 +22,22 @@ main =
         , onUrlChange = UrlChanged
         }
 
+type alias ChatEntry = 
+    { question : String
+    , answer : Maybe String
+    }
 
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , property : String
+    , chat : List ChatEntry
     , message : String
     }
 
-
 init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Model key url "modelInitialValue" "", Cmd.none )
+    ( Model key url "modelInitialValue" [] "", Cmd.none )
 
 
 type Msg
@@ -51,7 +55,10 @@ update msg model =
             ( { model | message = message }, Cmd.none )
 
         Submitted ->
-            ( { model | message = "" }, Cmd.none )
+            ( { model 
+                | message = ""
+                , chat = ChatEntry model.message Nothing :: model.chat
+            }, Cmd.none )
 
         UrlRequested urlRequest ->
             case urlRequest of
@@ -76,8 +83,9 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Elm ChatGPT client"
     , body = List.map toUnstyled
-        [ div []
+        [ div [] 
             [ text "Chat" ]
+        , div [] (List.map renderChatEntry model.chat)
         , form [onSubmit Submitted] 
             [ input 
                 [ placeholder "Just ask"
@@ -90,6 +98,16 @@ view model =
             ]
         ]
     }
+
+renderChatEntry : ChatEntry -> Html Msg
+renderChatEntry entry = 
+    let answerHtml = case entry.answer of
+            Nothing -> [ text "Assistant is typing..." ]
+            Just answer -> [ text ("Assistant: " ++ answer) ]
+    in div [] 
+        [ div [] [text entry.question]
+        , div [] answerHtml
+    ]
 
 messageInputCss : Attribute msg
 messageInputCss = css 
