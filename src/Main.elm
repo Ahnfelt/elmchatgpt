@@ -9,6 +9,7 @@ import Html.Styled.Events exposing (..)
 import Html.Styled.Attributes exposing (autofocus)
 import Styles
 import Json.Decode as Json exposing (Decoder)
+import Html.Styled.Attributes exposing (style)
 
 type alias Flags = ()
 
@@ -93,8 +94,10 @@ view model =
             , div [] (List.reverse model.chat |> List.map renderChatEntry)
             , form [ Styles.messageFormCss, onSubmit (Submitted True) ] 
                 [ textarea 
-                    [ placeholder "Send a message"
-                    , autofocus True
+                    [ autofocus True
+                    , if String.contains "\n" model.message 
+                        then style "height" "150px" 
+                        else placeholder "Send a message"
                     , Styles.messageInputCss
                     , value model.message
                     , onInput MessageChanged

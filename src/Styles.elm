@@ -3,6 +3,8 @@ module Styles exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Css.Transitions exposing (transition)
+import Css.Transitions exposing (Transition)
 
 mainCss : Attribute msg
 mainCss = css
@@ -38,7 +40,8 @@ messageInputCss = css
     , property "appearance" "none"
     , property "border" "none"
     , boxSizing borderBox
-    , padding (px 17)
+    , padding4 (px 17) (px 60) (px 17) (px 17)
+    , transition [ Css.Transitions.height 100 ]
     , height (px 54)
     , borderRadius (px 12)
     , width (calc (pct 100) minus (px 80))
