@@ -43,7 +43,7 @@ messageInputCss = css
     , property "appearance" "none"
     , property "border" "none"
     , boxSizing borderBox
-    , padding4 (px 17) (px 60) (px 17) (px 17)
+    , padding4 (px 17) (px 50) (px 17) (px 17)
     , transition [ Css.Transitions.height 100 ]
     , height (px 54)
     , borderRadius (px 12)
