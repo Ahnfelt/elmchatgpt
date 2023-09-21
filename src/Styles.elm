@@ -129,12 +129,14 @@ userMessageCss : Attribute msg
 userMessageCss = css
     [ width (calc (pct 100) minus (px 80))
     , maxWidth (px 750)
+    , whiteSpace preLine
     ]
 
 assistantMessageCss : Attribute msg
 assistantMessageCss = css
     [ width (calc (pct 100) minus (px 80))
     , maxWidth (px 750)
+    , whiteSpace preLine
     ]
 
 -- https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Asend%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4024
