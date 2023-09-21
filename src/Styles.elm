@@ -62,9 +62,9 @@ messageInputCss = css
 
 messageInputSmallCss : Attribute msg
 messageInputSmallCss = css 
-    [ paddingTop (px 10)
-    , paddingBottom (px 10)
-    , lineHeight (px (54 - 2 * 10))
+    [ paddingTop (px 15)
+    , paddingBottom (px 15)
+    , lineHeight (px (54 - 2 * 15))
     , height (px 54)
     ]
 
