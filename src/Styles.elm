@@ -129,6 +129,7 @@ userMessageCss : Attribute msg
 userMessageCss = css
     [ width (calc (pct 100) minus (px 80))
     , maxWidth (px 750)
+    , lineHeight (num 1.4)
     , whiteSpace preLine
     ]
 
@@ -136,6 +137,7 @@ assistantMessageCss : Attribute msg
 assistantMessageCss = css
     [ width (calc (pct 100) minus (px 80))
     , maxWidth (px 750)
+    , lineHeight (num 1.4)
     , whiteSpace preLine
     ]
 
