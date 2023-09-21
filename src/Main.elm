@@ -74,11 +74,11 @@ update msg model =
                     { url = "https://elm-lang.org/assets/public-opinion.txt"
                     , expect = Http.expectString (Answered model.message)
                     }
-            in
-            ( { model 
-                | message = ""
-                , chat = ChatEntry model.message Nothing :: model.chat
-            }, Cmd.batch [ scroll, fetch ] )
+                chat = ChatEntry model.message Nothing :: model.chat
+            in 
+            ( { model | message = "", chat = chat }
+            , Cmd.batch [ scroll, fetch ] 
+            )
 
         Answered question answer ->
             let answerText = case answer of
@@ -89,9 +89,9 @@ update msg model =
                     then {entry | answer = Just answerText}
                     else entry
             in
-            ( { model 
-                | chat = List.map applyAnswer model.chat
-            }, Cmd.none )
+            ( { model | chat = List.map applyAnswer model.chat }
+            , Cmd.none 
+            )
 
         UrlRequested urlRequest ->
             case urlRequest of
