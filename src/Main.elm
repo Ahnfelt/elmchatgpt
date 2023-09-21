@@ -83,7 +83,7 @@ update msg model =
         Answered question answer ->
             let answerText = case answer of
                     Ok text -> text
-                    Err _ -> "ERRROR"
+                    Err _ -> "Error."
                 applyAnswer entry = 
                     if entry.question == question && entry.answer == Nothing
                     then {entry | answer = Just answerText}
