@@ -37,6 +37,7 @@ messageInputCss : Attribute msg
 messageInputCss = css 
     [ fontSize (px 16)
     , fontFamilies [ "sans-serif" ]
+    , lineHeight (px (54 - 2 * 15))
     , backgroundColor (hex "#40414f")
     , color (hex "#f0f0f0")
     , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.15)
@@ -64,7 +65,6 @@ messageInputSmallCss : Attribute msg
 messageInputSmallCss = css 
     [ paddingTop (px 15)
     , paddingBottom (px 15)
-    , lineHeight (px (54 - 2 * 15))
     , height (px 54)
     ]
 
