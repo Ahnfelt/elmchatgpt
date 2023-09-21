@@ -12,6 +12,8 @@ import Json.Decode as Json exposing (Decoder)
 import Html.Styled.Attributes exposing (style)
 import Html.Styled.Attributes exposing (type_)
 import Html.Styled.Attributes exposing (disabled)
+import Http
+import Json.Decode exposing (Error(..))
 
 type alias Flags = ()
 
@@ -47,6 +49,7 @@ init flags url key =
 type Msg
     = MessageChanged String
     | Submitted Bool
+    | Answered String (Result Http.Error String)
     | UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
 
@@ -62,9 +65,27 @@ update msg model =
             ( model, Cmd.none )
 
         Submitted True ->
+            let fetch = Http.get
+                    { url = "https://elm-lang.org/assets/public-opinion.txt"
+                    , expect = Http.expectString (Answered model.message)
+                    }
+            in
             ( { model 
                 | message = ""
                 , chat = ChatEntry model.message Nothing :: model.chat
+            }, fetch )
+
+        Answered question answer ->
+            let answerText = case answer of
+                    Ok text -> text
+                    Err _ -> "ERRROR"
+                applyAnswer entry = 
+                    if entry.question == question && entry.answer == Nothing
+                    then {entry | answer = Just answerText}
+                    else entry
+            in
+            ( { model 
+                | chat = List.map applyAnswer model.chat
             }, Cmd.none )
 
         UrlRequested urlRequest ->
