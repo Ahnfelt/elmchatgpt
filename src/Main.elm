@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Dom as Dom
 import Browser.Navigation as Nav
 import Url
 import Html.Styled exposing (..)
@@ -14,6 +15,7 @@ import Html.Styled.Attributes exposing (type_)
 import Html.Styled.Attributes exposing (disabled)
 import Http
 import Json.Decode exposing (Error(..))
+import Task
 
 type alias Flags = ()
 
@@ -65,7 +67,10 @@ update msg model =
             ( model, Cmd.none )
 
         Submitted True ->
-            let fetch = Http.get
+            let scroll = Dom.getViewport 
+                    |> Task.andThen (\viewport -> Dom.setViewport 0 viewport.scene.height) 
+                    |> Task.perform (\_ -> Submitted False)
+                fetch = Http.get
                     { url = "https://elm-lang.org/assets/public-opinion.txt"
                     , expect = Http.expectString (Answered model.message)
                     }
@@ -73,7 +78,7 @@ update msg model =
             ( { model 
                 | message = ""
                 , chat = ChatEntry model.message Nothing :: model.chat
-            }, fetch )
+            }, Cmd.batch [ scroll, fetch ] )
 
         Answered question answer ->
             let answerText = case answer of
