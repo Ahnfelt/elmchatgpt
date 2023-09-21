@@ -43,9 +43,9 @@ messageInputCss = css
     , property "appearance" "none"
     , property "border" "none"
     , boxSizing borderBox
-    , padding4 (px 17) (px 50) (px 17) (px 17)
+    , paddingLeft (px 17) 
+    , paddingRight (px 50)
     , transition [ Css.Transitions.height 100 ]
-    , height (px 54)
     , borderRadius (px 12)
     , width (calc (pct 100) minus (px 80))
     , maxWidth (px 750)
@@ -58,6 +58,21 @@ messageInputCss = css
         [ outline none
         , boxShadow4 (px 0) (px 0) (px 15) (rgba 0 0 0 0.25)
         ]
+    ]
+
+messageInputSmallCss : Attribute msg
+messageInputSmallCss = css 
+    [ paddingTop (px 10)
+    , paddingBottom (px 10)
+    , lineHeight (px (54 - 2 * 10))
+    , height (px 54)
+    ]
+
+messageInputBigCss : Attribute msg
+messageInputBigCss = css 
+    [ paddingTop (px 17)
+    , paddingBottom (px 17)
+    , height (px 150)
     ]
 
 messageButtonCss : Attribute msg

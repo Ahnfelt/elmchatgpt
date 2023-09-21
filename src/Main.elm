@@ -123,9 +123,10 @@ renderMessageForm model = form
     [ Styles.messageFormCss, onSubmit (Submitted True) ] 
     [ textarea 
         [ autofocus True
+        , placeholder "Send a message"
         , if String.contains "\n" model.message 
-            then style "height" "150px" 
-            else placeholder "Send a message"
+            then Styles.messageInputBigCss
+            else Styles.messageInputSmallCss
         , Styles.messageInputCss
         , value model.message
         , onInput MessageChanged
