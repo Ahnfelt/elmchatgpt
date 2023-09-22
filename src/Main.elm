@@ -79,12 +79,13 @@ update msg model =
                         message "system" "You are a helpful assistant."
                         :: List.concatMap
                             (\entry ->
-                                message "user" entry.question ::
-                                case entry.answer of
+                                (case entry.answer of
                                     Just answer -> [ message "assistant" answer ]
                                     Nothing -> []
+                                )
+                                ++ [message "user" entry.question]
                             ) 
-                            chat
+                            (List.reverse chat)
                 body = E.object 
                     [ ("model", E.string "gpt-3.5-turbo")
                     , ("messages", E.list (\x -> x) messages)
