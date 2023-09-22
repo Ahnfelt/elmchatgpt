@@ -16,6 +16,9 @@ import Html.Styled.Attributes exposing (disabled)
 import Http
 import Json.Decode exposing (Error(..))
 import Task
+-- You must create this file yourself and fill in your own secrets. It's in .gitignore
+import Secrets
+import Json.Encode as E
 
 type alias Flags = ()
 
@@ -70,9 +73,30 @@ update msg model =
             let scroll = Dom.getViewport 
                     |> Task.andThen (\viewport -> Dom.setViewport 0 viewport.scene.height) 
                     |> Task.perform (\_ -> Submitted False)
-                fetch = Http.get
-                    { url = "https://elm-lang.org/assets/public-opinion.txt"
+                message role content = 
+                    E.object  [ ("role", E.string role), ("content", E.string content) ]
+                messages = 
+                        message "system" "You are a helpful assistant."
+                        :: List.concatMap
+                            (\entry ->
+                                message "user" entry.question ::
+                                case entry.answer of
+                                    Just answer -> [ message "assistant" answer ]
+                                    Nothing -> []
+                            ) 
+                            chat
+                body = E.object 
+                    [ ("model", E.string "gpt-3.5-turbo")
+                    , ("messages", E.list (\x -> x) messages)
+                    ]
+                fetch = Http.request
+                    { method = "POST" 
+                    , headers = [] 
+                    , url = "https://elm-lang.org/assets/public-opinion.txt" 
+                    , body = Http.jsonBody body
                     , expect = Http.expectString (Answered model.message)
+                    , timeout = Nothing
+                    , tracker = Nothing                    
                     }
                 chat = ChatEntry model.message Nothing :: model.chat
             in 
@@ -160,6 +184,7 @@ decodeKeyPress message =
             )
         )
     )
+
 
 renderChatEntry : ChatEntry -> Html Msg
 renderChatEntry entry = 
