@@ -91,10 +91,7 @@ update msg model =
                     ]
                 fetch = Http.request
                     { method = "POST" 
-                    , headers = 
-                        [ Http.header "Authorization" ("Bearer " ++ Secrets.key)
-                        --, Http.header "Content-Type" "application/json"
-                        ] 
+                    , headers = [ Http.header "Authorization" ("Bearer " ++ Secrets.key)] 
                     , url = "https://api.openai.com/v1/chat/completions" 
                     , body = Http.jsonBody body
                     , expect = Http.expectJson (Answered model.message) answerDecoder
