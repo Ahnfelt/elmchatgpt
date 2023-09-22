@@ -20,7 +20,7 @@ import Task
 import Secrets
 import Json.Encode as E
 
-type alias Flags = ()
+type alias Flags = () 
 
 main : Program Flags Model Msg
 main =
@@ -91,8 +91,11 @@ update msg model =
                     ]
                 fetch = Http.request
                     { method = "POST" 
-                    , headers = [] 
-                    , url = "https://elm-lang.org/assets/public-opinion.txt" 
+                    , headers = 
+                        [ Http.header "Authorization" ("Bearer " ++ Secrets.key)
+                        , Http.header "Content-Type" "application/json"
+                        ] 
+                    , url = "https://api.openai.com/v1/chat/completions" 
                     , body = Http.jsonBody body
                     , expect = Http.expectString (Answered model.message)
                     , timeout = Nothing
