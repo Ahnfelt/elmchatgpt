@@ -93,11 +93,11 @@ update msg model =
                     { method = "POST" 
                     , headers = 
                         [ Http.header "Authorization" ("Bearer " ++ Secrets.key)
-                        , Http.header "Content-Type" "application/json"
+                        --, Http.header "Content-Type" "application/json"
                         ] 
                     , url = "https://api.openai.com/v1/chat/completions" 
                     , body = Http.jsonBody body
-                    , expect = Http.expectString (Answered model.message)
+                    , expect = Http.expectJson (Answered model.message) answerDecoder
                     , timeout = Nothing
                     , tracker = Nothing                    
                     }
@@ -133,6 +133,9 @@ update msg model =
             , Cmd.none
             )
 
+answerDecoder : Decoder String
+answerDecoder =
+    Json.field "choices" (Json.index 0 (Json.field "message" (Json.field "content" Json.string)))
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
