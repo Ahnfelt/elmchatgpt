@@ -7,3 +7,5 @@ module Secrets exposing (..)
 
 key = "sk-lor3m1psumd0lor"
 ```
+
+You can then run it by starting `elm reactor` and navigating to `src/Main.elm`.
