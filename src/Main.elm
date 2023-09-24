@@ -15,6 +15,8 @@ import Task
 -- You must create the Secrets.elm yourself and fill in your own secrets. It's in .gitignore.
 import Secrets
 import Json.Encode as E
+import Markdown.Parser as Markdown
+import Markdown.Renderer
 
 type alias Flags = () 
 
@@ -188,9 +190,9 @@ decodeKeyPress message =
 
 renderChatEntry : ChatEntry -> Html Msg
 renderChatEntry entry = 
-    let answerHtml = case entry.answer of
-            Nothing -> text "Typing..."
-            Just answer -> text answer
+    let answer = case entry.answer of
+            Nothing -> "Typing..."
+            Just answerText -> answerText
     in div [] 
         [ div [ Styles.userMessageCss ] 
             [ div [ Styles.avatarCss ] 
@@ -200,7 +202,7 @@ renderChatEntry entry =
                     ] 
                     []
                 ]
-            , div [ Styles.messageCss ] [ text entry.question ]
+            , div [ Styles.messageCss ] [ renderMarkdown entry.question ]
             ]
         , div [ Styles.assistantMessageCss ] 
             [ div [ Styles.avatarCss ]
@@ -210,6 +212,15 @@ renderChatEntry entry =
                     ] 
                     []
                 ]
-            , div [ Styles.messageCss ] [ answerHtml ]
+            , div [ Styles.messageCss ] [ renderMarkdown answer ]
             ]
         ]
+
+renderMarkdown : String -> Html Msg
+renderMarkdown markdown =
+    let result = Markdown.parse markdown
+            |> Result.mapError (List.map Markdown.deadEndToString >> String.join "\n")
+            |> Result.andThen (\ast -> Markdown.Renderer.render Markdown.Renderer.defaultHtmlRenderer ast)
+    in case result of
+        Ok rendered -> div [] (List.map fromUnstyled rendered)
+        Err _ -> text markdown

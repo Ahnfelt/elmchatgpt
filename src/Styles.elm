@@ -130,6 +130,7 @@ assistantMessageCss = css
 messageCss : Attribute msg
 messageCss = css
     [ width (calc (pct 100) minus (px 80))
+    , marginTop (px (-16))
     , maxWidth (px 650)
     , lineHeight (num 1.4)
     , whiteSpace preLine
