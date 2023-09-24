@@ -1,6 +1,6 @@
 module Styles exposing (..)
 
-import Html.Styled exposing (..)
+import Html.Styled exposing (Attribute, Html, fromUnstyled, toUnstyled)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Css.Transitions exposing (transition)
@@ -8,6 +8,8 @@ import Css.Transitions exposing (Transition)
 import Html.Styled.Attributes exposing (placeholder)
 import Svg
 import Svg.Attributes
+import Css.Global exposing (img)
+import Css.Global exposing (selector)
 
 mainCss : Attribute msg
 mainCss = css
@@ -102,8 +104,8 @@ messageButtonCss = css
         ]
     ]
 
-userMessageContainerCss : Attribute msg
-userMessageContainerCss = css
+userMessageCss : Attribute msg
+userMessageCss = css
     [ displayFlex
     , justifyContent center
     , paddingTop (px 50)
@@ -113,8 +115,8 @@ userMessageContainerCss = css
     , color (rgb 209 213 219)
     ]
 
-assistantMessageContainerCss : Attribute msg
-assistantMessageContainerCss = css
+assistantMessageCss : Attribute msg
+assistantMessageCss = css
     [ backgroundColor (hex "#444654")
     , displayFlex
     , justifyContent center
@@ -125,20 +127,24 @@ assistantMessageContainerCss = css
     , color (rgb 209 213 219)
     ]
 
-userMessageCss : Attribute msg
-userMessageCss = css
+messageCss : Attribute msg
+messageCss = css
     [ width (calc (pct 100) minus (px 80))
-    , maxWidth (px 750)
+    , maxWidth (px 650)
     , lineHeight (num 1.4)
     , whiteSpace preLine
     ]
 
-assistantMessageCss : Attribute msg
-assistantMessageCss = css
-    [ width (calc (pct 100) minus (px 80))
-    , maxWidth (px 750)
-    , lineHeight (num 1.4)
-    , whiteSpace preLine
+avatarCss : Attribute msg
+avatarCss = css
+    [ width (px 60)
+    ]
+    
+avatarImageCss : Attribute msg
+avatarImageCss = css
+    [ width (px 36)
+    , borderRadius (px 3)
+    , display block
     ]
 
 -- https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Asend%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4024

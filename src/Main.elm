@@ -5,18 +5,14 @@ import Browser.Dom as Dom
 import Browser.Navigation as Nav
 import Url
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (placeholder, value, href)
+import Html.Styled.Attributes exposing (placeholder, value, href, autofocus, src, style, type_, disabled)
 import Html.Styled.Events exposing (..)
-import Html.Styled.Attributes exposing (autofocus)
 import Styles
 import Json.Decode as Json exposing (Decoder)
-import Html.Styled.Attributes exposing (style)
-import Html.Styled.Attributes exposing (type_)
-import Html.Styled.Attributes exposing (disabled)
 import Http
 import Json.Decode exposing (Error(..))
 import Task
--- You must create this file yourself and fill in your own secrets. It's in .gitignore
+-- You must create the Secrets.elm yourself and fill in your own secrets. It's in .gitignore.
 import Secrets
 import Json.Encode as E
 
@@ -193,13 +189,27 @@ decodeKeyPress message =
 renderChatEntry : ChatEntry -> Html Msg
 renderChatEntry entry = 
     let answerHtml = case entry.answer of
-            Nothing -> text "Assistant is typing..."
-            Just answer -> text ("Assistant: " ++ answer)
+            Nothing -> text "Typing..."
+            Just answer -> text answer
     in div [] 
-        [ div [ Styles.userMessageContainerCss ] 
-            [ div [ Styles.userMessageCss ] [ text ("User: " ++ entry.question) ]
+        [ div [ Styles.userMessageCss ] 
+            [ div [ Styles.avatarCss ] 
+                [ img 
+                    [ src "https://avatars.githubusercontent.com/u/20698192?s=200&v=4" 
+                    , Styles.avatarImageCss
+                    ] 
+                    []
+                ]
+            , div [ Styles.messageCss ] [ text entry.question ]
             ]
-        , div [ Styles.assistantMessageContainerCss ] 
-            [ div [ Styles.assistantMessageCss ] [ answerHtml ]
+        , div [ Styles.assistantMessageCss ] 
+            [ div [ Styles.avatarCss ]
+                [ img 
+                    [ src "https://chat.openai.com/apple-touch-icon.png" 
+                    , Styles.avatarImageCss
+                    ] 
+                    []
+                ]
+            , div [ Styles.messageCss ] [ answerHtml ]
             ]
         ]
