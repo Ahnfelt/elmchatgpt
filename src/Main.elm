@@ -1,20 +1,20 @@
 module Main exposing (main)
 
+import Task
 import Browser
 import Browser.Dom as Dom
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (placeholder, value, autofocus, src, type_, disabled)
 import Html.Styled.Events exposing (..)
-import Styles
-import Json.Decode as Json exposing (Decoder)
 import Http
-import Json.Decode exposing (Error(..))
-import Task
--- You must create the Secrets.elm yourself and fill in your own secrets. It's in .gitignore.
-import Secrets
 import Json.Encode as E
+import Json.Decode as Json exposing (Decoder)
+import Json.Decode exposing (Error(..))
 import Markdown.Parser as Markdown
 import Markdown.Renderer
+
+import Styles
+import Secrets
 
 type alias Flags = () 
 
