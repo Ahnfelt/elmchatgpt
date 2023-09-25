@@ -26,23 +26,22 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = \model -> Sub.none
         }
+
+type alias Model =
+    { chat : List ChatEntry
+    , message : String
+    }
 
 type alias ChatEntry = 
     { question : String
     , answer : Maybe String
     }
 
-type alias Model =
-    { property : String
-    , chat : List ChatEntry
-    , message : String
-    }
-
 init : Flags -> ( Model, Cmd Msg )
-init flags =
-    ( Model "modelInitialValue" [] "", Cmd.none )
+init () =
+    ( { chat = [], message = "" }, Cmd.none )
 
 
 type Msg
@@ -113,10 +112,6 @@ update msg model =
 answerDecoder : Decoder String
 answerDecoder =
     Json.field "choices" (Json.index 0 (Json.field "message" (Json.field "content" Json.string)))
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
 
 
 view : Model -> Browser.Document Msg
