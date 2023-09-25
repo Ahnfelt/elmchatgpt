@@ -59,44 +59,36 @@ update msg model =
             ( model, Cmd.none )
 
         Submitted True ->
-            let scroll = Dom.getViewport 
-                    |> Task.andThen (\viewport -> Dom.setViewport 0 viewport.scene.height) 
-                    |> Task.perform (\_ -> Submitted False)
-                chat = ChatEntry model.message Nothing :: model.chat
-            in 
+            let chat = ChatEntry model.message Nothing :: model.chat in 
             ( { model | message = "", chat = chat }
-            , Cmd.batch [ scroll, fetchAnswer model.message chat ] 
+            , Cmd.batch [ scrollToBottom, fetchAnswer model.message chat ] 
             )
 
         Answered question answer ->
-            let answerText = case answer of
-                    Ok text -> text
-                    Err _ -> "Error."
-                applyAnswer entry = 
+            let setAnswer entry = 
                     if entry.question == question && entry.answer == Nothing
-                    then {entry | answer = Just answerText}
+                    then {entry | answer = Just (Result.withDefault "Error." answer)}
                     else entry
             in
-            ( { model | chat = List.map applyAnswer model.chat }
+            ( { model | chat = List.map setAnswer model.chat }
             , Cmd.none 
             )
+
+scrollToBottom : Cmd Msg
+scrollToBottom = Dom.getViewport 
+    |> Task.andThen (\viewport -> Dom.setViewport 0 viewport.scene.height) 
+    |> Task.perform (\_ -> Submitted False)
 
 fetchAnswer : String -> List ChatEntry -> Cmd Msg
 fetchAnswer message chat = 
     let
         encodeMessage role content = 
             E.object  [ ("role", E.string role), ("content", E.string content) ]
-        encodedMessages = 
-                encodeMessage "system" "You are a helpful assistant."
-                :: List.concatMap
-                    (\entry ->
-                        (case entry.answer of
-                            Just answer -> [ encodeMessage "assistant" answer ]
-                            Nothing -> []
-                        )
-                        ++ [encodeMessage "user" entry.question]
-                    ) 
-                    (List.reverse chat)
+        encodeEntry question maybeAnswer = case maybeAnswer of
+            Nothing -> [ encodeMessage "user" question ]
+            Just answer -> [ encodeMessage "user" question, encodeMessage "assistant" answer ]
+        encodedMessages = encodeMessage "system" "You are a helpful assistant."
+            :: List.concatMap (\entry -> encodeEntry entry.question entry.answer) chat
         body = E.object 
             [ ("model", E.string "gpt-3.5-turbo")
             , ("messages", E.list (\x -> x) encodedMessages)
@@ -121,7 +113,7 @@ view model =
     { title = "Elm ChatGPT client"
     , body = List.map toUnstyled
         [ main_ [ Styles.mainCss ] 
-            [ div [] (List.reverse model.chat |> List.map renderChatEntry)
+            [ div [] (List.map renderChatEntry model.chat)
             , renderMessageForm model
             ]
         ]
