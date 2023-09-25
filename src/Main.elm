@@ -81,6 +81,17 @@ scrollToBottom = Dom.getViewport
 
 fetchAnswer : String -> List ChatEntry -> Cmd Msg
 fetchAnswer message chat = 
+    Http.request
+        { method = "POST" 
+        , headers = [ Http.header "Authorization" ("Bearer " ++ Secrets.key)] 
+        , url = "https://api.openai.com/v1/chat/completions" 
+        , body = Http.jsonBody (encodeChat message chat)
+        , expect = Http.expectJson (Answered message) answerDecoder
+        , timeout = Nothing
+        , tracker = Nothing                    
+        }
+
+encodeChat message chat =
     let
         encodeMessage role content = 
             E.object  [ ("role", E.string role), ("content", E.string content) ]
@@ -89,19 +100,10 @@ fetchAnswer message chat =
             Just answer -> [ encodeMessage "user" question, encodeMessage "assistant" answer ]
         encodedMessages = encodeMessage "system" "You are a helpful assistant."
             :: List.concatMap (\entry -> encodeEntry entry.question entry.answer) chat
-        body = E.object 
-            [ ("model", E.string "gpt-3.5-turbo")
-            , ("messages", E.list (\x -> x) encodedMessages)
-            ]
-    in Http.request
-        { method = "POST" 
-        , headers = [ Http.header "Authorization" ("Bearer " ++ Secrets.key)] 
-        , url = "https://api.openai.com/v1/chat/completions" 
-        , body = Http.jsonBody body
-        , expect = Http.expectJson (Answered message) answerDecoder
-        , timeout = Nothing
-        , tracker = Nothing                    
-        }
+    in E.object 
+        [ ("model", E.string "gpt-3.5-turbo")
+        , ("messages", E.list (\x -> x) encodedMessages)
+        ]
 
 answerDecoder : Decoder String
 answerDecoder =
