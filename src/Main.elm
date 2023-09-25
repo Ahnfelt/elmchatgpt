@@ -2,10 +2,8 @@ module Main exposing (main)
 
 import Browser
 import Browser.Dom as Dom
-import Browser.Navigation as Nav
-import Url
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (placeholder, value, href, autofocus, src, style, type_, disabled)
+import Html.Styled.Attributes exposing (placeholder, value, autofocus, src, type_, disabled)
 import Html.Styled.Events exposing (..)
 import Styles
 import Json.Decode as Json exposing (Decoder)
