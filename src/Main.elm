@@ -22,13 +22,11 @@ type alias Flags = ()
 
 main : Program Flags Model Msg
 main =
-    Browser.application
+    Browser.document
         { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
-        , onUrlRequest = UrlRequested
-        , onUrlChange = UrlChanged
         }
 
 type alias ChatEntry = 
@@ -37,24 +35,20 @@ type alias ChatEntry =
     }
 
 type alias Model =
-    { key : Nav.Key
-    , url : Url.Url
-    , property : String
+    { property : String
     , chat : List ChatEntry
     , message : String
     }
 
-init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( Model key url "modelInitialValue" [] "", Cmd.none )
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( Model "modelInitialValue" [] "", Cmd.none )
 
 
 type Msg
     = MessageChanged String
     | Submitted Bool
     | Answered String (Result Http.Error String)
-    | UrlRequested Browser.UrlRequest
-    | UrlChanged Url.Url
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -114,19 +108,6 @@ update msg model =
             in
             ( { model | chat = List.map applyAnswer model.chat }
             , Cmd.none 
-            )
-
-        UrlRequested urlRequest ->
-            case urlRequest of
-                Browser.Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
-
-                Browser.External href ->
-                    ( model, Nav.load href )
-
-        UrlChanged url ->
-            ( { model | url = url }
-            , Cmd.none
             )
 
 answerDecoder : Decoder String
