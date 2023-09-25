@@ -62,36 +62,10 @@ update msg model =
             let scroll = Dom.getViewport 
                     |> Task.andThen (\viewport -> Dom.setViewport 0 viewport.scene.height) 
                     |> Task.perform (\_ -> Submitted False)
-                message role content = 
-                    E.object  [ ("role", E.string role), ("content", E.string content) ]
-                messages = 
-                        message "system" "You are a helpful assistant."
-                        :: List.concatMap
-                            (\entry ->
-                                (case entry.answer of
-                                    Just answer -> [ message "assistant" answer ]
-                                    Nothing -> []
-                                )
-                                ++ [message "user" entry.question]
-                            ) 
-                            (List.reverse chat)
-                body = E.object 
-                    [ ("model", E.string "gpt-3.5-turbo")
-                    , ("messages", E.list (\x -> x) messages)
-                    ]
-                fetch = Http.request
-                    { method = "POST" 
-                    , headers = [ Http.header "Authorization" ("Bearer " ++ Secrets.key)] 
-                    , url = "https://api.openai.com/v1/chat/completions" 
-                    , body = Http.jsonBody body
-                    , expect = Http.expectJson (Answered model.message) answerDecoder
-                    , timeout = Nothing
-                    , tracker = Nothing                    
-                    }
                 chat = ChatEntry model.message Nothing :: model.chat
             in 
             ( { model | message = "", chat = chat }
-            , Cmd.batch [ scroll, fetch ] 
+            , Cmd.batch [ scroll, fetchAnswer model.message chat ] 
             )
 
         Answered question answer ->
@@ -106,6 +80,36 @@ update msg model =
             ( { model | chat = List.map applyAnswer model.chat }
             , Cmd.none 
             )
+
+fetchAnswer : String -> List ChatEntry -> Cmd Msg
+fetchAnswer message chat = 
+    let
+        encodeMessage role content = 
+            E.object  [ ("role", E.string role), ("content", E.string content) ]
+        encodedMessages = 
+                encodeMessage "system" "You are a helpful assistant."
+                :: List.concatMap
+                    (\entry ->
+                        (case entry.answer of
+                            Just answer -> [ encodeMessage "assistant" answer ]
+                            Nothing -> []
+                        )
+                        ++ [encodeMessage "user" entry.question]
+                    ) 
+                    (List.reverse chat)
+        body = E.object 
+            [ ("model", E.string "gpt-3.5-turbo")
+            , ("messages", E.list (\x -> x) encodedMessages)
+            ]
+    in Http.request
+        { method = "POST" 
+        , headers = [ Http.header "Authorization" ("Bearer " ++ Secrets.key)] 
+        , url = "https://api.openai.com/v1/chat/completions" 
+        , body = Http.jsonBody body
+        , expect = Http.expectJson (Answered message) answerDecoder
+        , timeout = Nothing
+        , tracker = Nothing                    
+        }
 
 answerDecoder : Decoder String
 answerDecoder =
