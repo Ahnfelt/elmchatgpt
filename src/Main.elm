@@ -65,7 +65,10 @@ update msg model =
         Submitted True ->
             let chat = model.chat ++ [ ChatEntry model.message Nothing ] in 
             ( { model | message = "", chat = chat }
-            , Cmd.batch [ scrollToBottom, fetchAnswer model.message chat ] 
+            , Cmd.batch 
+                [ scrollToBottom
+                , fetchAnswer model.message chat 
+                ] 
             )
 
         Answered question answer ->
