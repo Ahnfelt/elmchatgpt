@@ -16,26 +16,30 @@ import Markdown.Renderer
 import Styles
 import Secrets
 
+
 type alias Flags = () 
 
+
 main : Program Flags Model Msg
-main =
-    Browser.document
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = \model -> Sub.none
-        }
+main = Browser.document
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = \model -> Sub.none
+    }
+
 
 type alias Model =
     { chat : List ChatEntry
     , message : String
     }
 
+
 type alias ChatEntry = 
     { question : String
     , answer : Maybe String
     }
+
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
@@ -59,7 +63,7 @@ update msg model =
             ( model, Cmd.none )
 
         Submitted True ->
-            let chat = ChatEntry model.message Nothing :: model.chat in 
+            let chat = model.chat ++ [ ChatEntry model.message Nothing ] in 
             ( { model | message = "", chat = chat }
             , Cmd.batch [ scrollToBottom, fetchAnswer model.message chat ] 
             )
@@ -74,10 +78,12 @@ update msg model =
             , Cmd.none 
             )
 
+
 scrollToBottom : Cmd Msg
 scrollToBottom = Dom.getViewport 
     |> Task.andThen (\viewport -> Dom.setViewport 0 viewport.scene.height) 
     |> Task.perform (\_ -> Submitted False)
+
 
 fetchAnswer : String -> List ChatEntry -> Cmd Msg
 fetchAnswer message chat = 
@@ -85,13 +91,15 @@ fetchAnswer message chat =
         { method = "POST" 
         , headers = [ Http.header "Authorization" ("Bearer " ++ Secrets.key)] 
         , url = "https://api.openai.com/v1/chat/completions" 
-        , body = Http.jsonBody (encodeChat message chat)
+        , body = Http.jsonBody (encodeChat chat)
         , expect = Http.expectJson (Answered message) answerDecoder
         , timeout = Nothing
         , tracker = Nothing                    
         }
 
-encodeChat message chat =
+
+encodeChat : List ChatEntry -> E.Value
+encodeChat chat =
     let
         encodeMessage role content = 
             E.object  [ ("role", E.string role), ("content", E.string content) ]
@@ -104,6 +112,7 @@ encodeChat message chat =
         [ ("model", E.string "gpt-3.5-turbo")
         , ("messages", E.list (\x -> x) encodedMessages)
         ]
+
 
 answerDecoder : Decoder String
 answerDecoder =
@@ -144,6 +153,7 @@ renderMessageForm model = form
         [ Styles.sendSvg
         ]
     ]
+
 
 decodeKeyPress : String -> Decoder (Msg, Bool)
 decodeKeyPress message =
@@ -187,6 +197,7 @@ renderChatEntry entry =
             , div [ Styles.messageCss ] [ renderMarkdown answer ]
             ]
         ]
+
 
 renderMarkdown : String -> Html Msg
 renderMarkdown markdown =
